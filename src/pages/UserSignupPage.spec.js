@@ -267,7 +267,7 @@ describe("UserSignupPage", () => {
       expect(mismatchWarning).toBeInTheDocument();
     });
 
-    it("displays errro style for password repeat input when password input mismatch", () => {
+    it("displays error style for password repeat input when password input mismatch", () => {
       const { queryByText } = setupForSubmit();
       fireEvent.change(passwordInput, changeEvent("new-pass"));
       const mismatchWarning = queryByText("Does not match to password");
