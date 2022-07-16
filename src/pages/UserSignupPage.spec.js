@@ -342,6 +342,22 @@ describe("UserSignupPage", () => {
       const errorMessage = queryByText("Cannot be null");
       expect(errorMessage).not.toBeInTheDocument();
     });
+
+    it("redirects to homePage after successful signup", async () => {
+      const actions = {
+        postSignup: jest.fn().mockResolvedValue({}),
+      };
+
+      const history = {
+        push: jest.fn(),
+      };
+      const { queryByText } = setupForSubmit({ actions, history });
+      fireEvent.click(button);
+
+      await waitForElementToBeRemoved(() => queryByText("Loading..."));
+
+      expect(history.push).toHaveBeenCalledWith("/");
+    });
   });
 });
 

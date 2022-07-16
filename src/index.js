@@ -1,22 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
+import { HashRouter } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
-import { UserSignupPage } from "./pages/UserSignupPage";
-import { LoginPage } from "./pages/LoginPage";
-import * as apiCalls from "./api/apiCalls";
+import App from "./containers/App";
 
-const actions = {
-  postLogin: apiCalls.login,
-  //postSignup: apiCalls.signup
-};
+// const actions = {
+//   postLogin: apiCalls.login,
+//   //postSignup: apiCalls.signup
+// };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <LoginPage actions={actions} />
-  </React.StrictMode>
+  <HashRouter>
+    <App />
+  </HashRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
