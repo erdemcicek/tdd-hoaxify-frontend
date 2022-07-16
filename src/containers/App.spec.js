@@ -86,4 +86,6 @@ describe("App", () => {
     fireEvent.click(logo);
     expect(queryByTestId("homepage")).toBeInTheDocument();
   });
+  
+  
 });
