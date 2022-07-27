@@ -11,14 +11,29 @@ class UserList extends React.Component {
     },
   };
   componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = (requestedPage = 0) => {
     apiCalls
-      .listUsers({ page: this.state.page.number, size: this.state.page.size })
+      .listUsers({ page: requestedPage, size: this.state.page.size })
       .then((response) => {
         this.setState({
           page: response.data,
+          loadError: undefined,
         });
+      })
+      .catch((error) => {
+        this.setState({ loadError: "User load failed" });
       });
-  }
+  };
+
+  onClickNext = () => {
+    this.loadData(this.state.page.number + 1);
+  };
+  onClickPrevious = () => {
+    this.loadData(this.state.page.number - 1);
+  };
   render() {
     return (
       <div className="card">
@@ -28,9 +43,29 @@ class UserList extends React.Component {
             return <UserListItem key={user.username} user={user} />;
           })}
         </div>
-        <div>
-          <span className="badge badge-light">next {">"}</span>
+        <div className="clearfix">
+          {!this.state.page.first && (
+            <span
+              className="badge bg-light float-start"
+              style={{ cursor: "pointer", color: "black" }}
+              onClick={this.onClickPrevious}
+            >{`< previous`}</span>
+          )}
+          {!this.state.page.last && (
+            <span
+              className="badge bg-light float-end"
+              style={{ cursor: "pointer", color: "black" }}
+              onClick={this.onClickNext}
+            >
+              {`next >`}
+            </span>
+          )}
         </div>
+        {this.state.loadError && (
+          <span className="text-center text-danger">
+            {this.state.loadError}
+          </span>
+        )}
       </div>
     );
   }
