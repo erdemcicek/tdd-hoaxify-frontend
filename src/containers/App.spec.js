@@ -260,6 +260,46 @@ describe("App", () => {
     const myProfileLink = queryByText("My Profile");
     expect(myProfileLink).toBeInTheDocument();
   });
+  it("sets axios authorization with base64 encoded user credentials after login success", async () => {
+    const { queryByPlaceholderText, container, findByText } = setup("/login");
+    const usernameInput = queryByPlaceholderText("Your username");
+    fireEvent.change(usernameInput, changeEvent("user1"));
+    const passwordInput = queryByPlaceholderText("Your password");
+    fireEvent.change(passwordInput, changeEvent("P4ssword"));
+    const button = container.querySelector("button");
+    axios.post = jest.fn().mockResolvedValue({
+      data: {
+        id: 1,
+        username: "user1",
+        displayName: "display1",
+        image: "profile1.png",
+      },
+    });
+    fireEvent.click(button);
+
+    await findByText("My Profile");
+    const axiosAuthorization = axios.defaults.headers.common["Authorization"];
+
+    const encoded = btoa("user1:P4ssword");
+    const expectedAuthorization = `Basic ${encoded}`;
+    expect(axiosAuthorization).toBe(expectedAuthorization);
+  });
+  it("sets axios authorization with base64 encoded user credentials when storage has logged in user data", () => {
+    setUserOneLoggedInStorage();
+    setup("/");
+    const axiosAuthorization = axios.defaults.headers.common["Autorization"];
+    const encoded = btoa("user1:P4ssword");
+    const expectedAuthorization = `Basic ${encoded}`;
+    expect(axiosAuthorization).toBe(expectedAuthorization);
+  });
+  it("removes axios authorization header when user logout", async () => {
+    setUserOneLoggedInStorage();
+    const { queryByText } = setup("/");
+    fireEvent.click(queryByText("Logout"));
+
+    const axiosAuthorization = axios.defaults.headers.common["Authorization"];
+    expect(axiosAuthorization).toBeFalsy();
+  });
   it("updates user page after clicking my profile when another user page was opened", async () => {
     apiCalls.getUser = jest
       .fn()
